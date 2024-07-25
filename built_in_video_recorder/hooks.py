@@ -10,8 +10,8 @@ app_license = "mit"
 # ------------------
 
 # include js, css files in header of desk.html
-# app_include_css = "/assets/built_in_video_recorder/css/built_in_video_recorder.css"
-# app_include_js = "/assets/built_in_video_recorder/js/built_in_video_recorder.js"
+app_include_css = "/assets/built_in_video_recorder/css/video_recorder.css"
+app_include_js = "/assets/built_in_video_recorder/js/video_recorder.js"
 
 # include js, css files in header of web template
 # web_include_css = "/assets/built_in_video_recorder/css/built_in_video_recorder.css"
