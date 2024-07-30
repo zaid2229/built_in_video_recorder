@@ -5,6 +5,7 @@ $(document).ready(function() {
     let recordingTimeInterval;
     let startTime;
     let currentFieldName; // Variable to store the field name
+    let currentFacingMode = 'environment'; // Default to back camera
 
     async function openCameraModal() {
         $('#videoRecorderModal').remove();
@@ -23,6 +24,7 @@ $(document).ready(function() {
                         <div class="video-container">
                             <video id="videoPreview" autoplay muted></video>
                             <div class="controls">
+                                <button id="switchCamera" class="button switch">🔄 Switch Camera</button>
                                 <button id="startRecording" class="button start">🔴 Start Recording</button>
                                 <button id="stopRecording" class="button stop" disabled>⏹️ Stop Recording</button>
                                 <button id="recordAgain" class="button record-again" style="display: none;">🔄 Record Again</button>
@@ -30,6 +32,7 @@ $(document).ready(function() {
                             <a id="downloadLink" class="download-link" style="display: none;">⬇️ Download Video</a>
                             <div id="recordingTime" class="recording-time">00:00</div>
                             <div id="videoDuration" class="video-duration" style="display: none;">Duration: 00:00</div>
+                            <div id="cameraModeLabel" class="camera-mode-label">Back Camera</div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -45,17 +48,28 @@ $(document).ready(function() {
         const startRecordingButton = document.getElementById("startRecording");
         const stopRecordingButton = document.getElementById("stopRecording");
         const recordAgainButton = document.getElementById("recordAgain");
+        const switchCameraButton = document.getElementById("switchCamera");
         const downloadLink = document.getElementById("downloadLink");
         const attachVideoButton = document.getElementById("attachVideo");
         const recordingTime = document.getElementById("recordingTime");
         const videoDuration = document.getElementById("videoDuration");
+        const cameraModeLabel = document.getElementById("cameraModeLabel");
 
-        async function initializeCamera() {
+        async function initializeCamera(facingMode = 'environment') {
             try {
-                stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                }
+                stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: facingMode },
+                    audio: true
+                });
                 videoPreview.srcObject = stream;
                 videoPreview.muted = true;
                 videoPreview.play();
+
+                // Update the camera mode label
+                cameraModeLabel.textContent = facingMode === 'user' ? 'Front Camera' : 'Back Camera';
             } catch (error) {
                 console.error("Error accessing media devices.", error);
                 alert('Could not access camera and microphone. Please check your permissions.');
@@ -129,7 +143,7 @@ $(document).ready(function() {
 
                             if (response.ok) {
                                 let result = await response.json();
-                                frappe.show_alert({message: 'Video uploaded successfully', indicator: 'green'});
+                                frappe.show_alert({ message: 'Video uploaded successfully', indicator: 'green' });
 
                                 const doc = cur_frm.doc;
                                 doc[currentFieldName] = result.message.file_url; // Use the captured field name here
@@ -142,7 +156,7 @@ $(document).ready(function() {
                                     },
                                     callback: function(r) {
                                         if (!r.exc) {
-                                            frappe.show_alert({message: 'Document updated with video attachment', indicator: 'green'});
+                                            frappe.show_alert({ message: 'Document updated with video attachment', indicator: 'green' });
                                             cur_frm.reload_doc();
                                         }
                                     }
@@ -153,7 +167,7 @@ $(document).ready(function() {
                                 stream.getTracks().forEach(track => track.stop());
 
                                 $('.modal-backdrop').remove();
-                                
+
                                 if (window.parent) {
                                     window.parent.$('.modal').modal('hide');
                                 }
@@ -162,7 +176,7 @@ $(document).ready(function() {
                             }
                         } catch (error) {
                             console.error("Error uploading video:", error);
-                            frappe.show_alert({message: 'Video upload failed', indicator: 'red'});
+                            frappe.show_alert({ message: 'Video upload failed', indicator: 'red' });
                         }
                     };
 
@@ -208,10 +222,19 @@ $(document).ready(function() {
             recordAgainButton.style.display = "none";
         }
 
-        $('#videoRecorderModal').on('shown.bs.modal', initializeCamera);
+        async function switchCamera() {
+            currentFacingMode = currentFacingMode === 'user' ? 'environment' : 'user';
+            await initializeCamera(currentFacingMode);
+        }
+
+        $('#videoRecorderModal').on('shown.bs.modal', function() {
+            initializeCamera(currentFacingMode);
+        });
+
         startRecordingButton.addEventListener("click", startRecording);
         stopRecordingButton.addEventListener("click", stopRecording);
         recordAgainButton.addEventListener("click", recordAgain);
+        switchCameraButton.addEventListener("click", switchCamera);
 
         $('#videoRecorderModal').modal('show');
     }
@@ -240,5 +263,6 @@ $(document).ready(function() {
     // Event listener for attach buttons
     $(document).on('click', '.btn-attach', function() {
         currentFieldName = $(this).data('fieldname'); // Capture the field name
+       
     });
 });
