@@ -92,7 +92,7 @@ video {
     border-radius: 5px;
 }
 
-.btn.btn-file-upload:nth-of-type(2) {
+/* .btn.btn-file-upload:nth-of-type(2) {
     display: none;
 }
 
@@ -110,4 +110,4 @@ video {
 
 .btn.btn-file-upload:nth-of-type(5) {
     display: none;
-}
+} */

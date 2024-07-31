@@ -1,11 +1,16 @@
 $(document).ready(function() {
     let mediaRecorder;
-    let recordedChunks = [];
     let stream;
+    let recorder;
     let recordingTimeInterval;
     let startTime;
     let currentFieldName; // Variable to store the field name
     let currentFacingMode = 'environment'; // Default to back camera
+
+    // Include RecordRTC library
+    const script = document.createElement('script');
+    script.src = 'https://cdn.webrtc-experiment.com/RecordRTC.js';
+    document.head.appendChild(script);
 
     async function openCameraModal() {
         $('#videoRecorderModal').remove();
@@ -42,8 +47,11 @@ $(document).ready(function() {
                 </div>
             </div>
         </div>
-    `;
+        `;
+
         $('body').append(modalHtml);
+       
+
         const videoPreview = document.getElementById("videoPreview");
         const startRecordingButton = document.getElementById("startRecording");
         const stopRecordingButton = document.getElementById("stopRecording");
@@ -85,23 +93,30 @@ $(document).ready(function() {
 
         async function startRecording() {
             try {
-                recordedChunks = [];
-                mediaRecorder = new MediaRecorder(stream);
+                recorder = RecordRTC(stream, {
+                    type: 'video'
+                });
+                recorder.startRecording();
+                startTime = Date.now();
+                recordingTime.textContent = "00:00";
+                recordingTimeInterval = setInterval(updateRecordingTime, 1000);
+                startRecordingButton.disabled = true;
+                stopRecordingButton.disabled = false;
+                recordAgainButton.style.display = "none";
+            } catch (error) {
+                console.error("Error starting recording:", error);
+                alert('Could not start recording. Please try again.');
+            }
+        }
 
-                mediaRecorder.ondataavailable = (event) => {
-                    if (event.data.size > 0) {
-                        recordedChunks.push(event.data);
-                    }
-                };
-
-                mediaRecorder.onstop = async () => {
-                    const videoBlob = new Blob(recordedChunks, { type: "video/webm" });
-                    recordedChunks = [];
-
+        async function stopRecording() {
+            try {
+                recorder.stopRecording(async () => {
+                    const videoBlob = recorder.getBlob();
                     const videoURL = URL.createObjectURL(videoBlob);
                     downloadLink.href = videoURL;
                     downloadLink.style.display = "block";
-                    downloadLink.download = "recorded-video.webm";
+                    downloadLink.download = "recorded-video.mp4";
 
                     attachVideoButton.disabled = false;
 
@@ -122,7 +137,7 @@ $(document).ready(function() {
                     });
 
                     attachVideoButton.onclick = async function() {
-                        let file = new File([videoBlob], "recorded_video.webm", { type: 'video/webm' });
+                        let file = new File([videoBlob], "recorded_video.mp4", { type: 'video/mp4' });
 
                         let formData = new FormData();
                         formData.append('file', file);
@@ -183,28 +198,10 @@ $(document).ready(function() {
                     // Show the "Record Again" button and hide the "Start Recording" button
                     recordAgainButton.style.display = "block";
                     startRecordingButton.style.display = "none";
-                };
-
-                mediaRecorder.start();
-                startTime = Date.now();
-                recordingTime.textContent = "00:00";
-                recordingTimeInterval = setInterval(updateRecordingTime, 1000);
-                startRecordingButton.disabled = true;
-                stopRecordingButton.disabled = false;
-                recordAgainButton.style.display = "none";
+                });
             } catch (error) {
-                console.error("Error starting recording:", error);
-                alert('Could not start recording. Please try again.');
-            }
-        }
-
-        function stopRecording() {
-            if (mediaRecorder && mediaRecorder.state === "recording") {
-                mediaRecorder.stop();
-                startRecordingButton.disabled = true;
-                stopRecordingButton.disabled = true;
-                clearInterval(recordingTimeInterval);
-                recordingTime.textContent = "00:00";
+                console.error("Error stopping recording:", error);
+                alert('Could not stop recording. Please try again.');
             }
         }
 
@@ -263,6 +260,5 @@ $(document).ready(function() {
     // Event listener for attach buttons
     $(document).on('click', '.btn-attach', function() {
         currentFieldName = $(this).data('fieldname'); // Capture the field name
-       
     });
 });
