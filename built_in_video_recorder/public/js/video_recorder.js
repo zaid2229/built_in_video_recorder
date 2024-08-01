@@ -1,7 +1,6 @@
 $(document).ready(function() {
-    let mediaRecorder;
-    let stream;
     let recorder;
+    let stream;
     let recordingTimeInterval;
     let startTime;
     let currentFieldName; // Variable to store the field name
@@ -50,7 +49,61 @@ $(document).ready(function() {
         `;
 
         $('body').append(modalHtml);
-       
+        const styleHtml = `
+        <style>
+            .video-container {
+                position: relative;
+                width: 100%;
+                max-width: 640px;
+                margin: auto;
+            }
+            #videoPreview {
+                width: 100%;
+                height: auto;
+                background: black;
+            }
+            .controls {
+                position: absolute;
+                top: 10px;
+                left: 10px;
+                right: 10px;
+                display: flex;
+                justify-content: space-between;
+                pointer-events: none;
+            }
+            .controls button {
+                pointer-events: auto;
+                background-color: rgba(255, 255, 255, 0.7);
+                border: none;
+                padding: 10px;
+                border-radius: 5px;
+            }
+            .controls button:hover {
+                background-color: rgba(255, 255, 255, 1);
+            }
+            .recording-time,
+            .video-duration {
+                text-align: center;
+                font-size: 18px;
+                font-weight: bold;
+                margin-top: 10px;
+            }
+            .download-link {
+                display: block;
+                text-align: center;
+                margin-top: 10px;
+            }
+            .camera-mode-label {
+                position: absolute;
+                bottom: 10px;
+                left: 10px;
+                background-color: rgba(255, 255, 255, 0.7);
+                padding: 5px 10px;
+                border-radius: 5px;
+            }
+        </style>
+        `;
+        $('head').append(styleHtml);
 
         const videoPreview = document.getElementById("videoPreview");
         const startRecordingButton = document.getElementById("startRecording");
@@ -94,7 +147,8 @@ $(document).ready(function() {
         async function startRecording() {
             try {
                 recorder = RecordRTC(stream, {
-                    type: 'video'
+                    type: 'video',
+                    mimeType: 'video/mp4' // Ensure MP4 format
                 });
                 recorder.startRecording();
                 startTime = Date.now();
@@ -111,7 +165,7 @@ $(document).ready(function() {
 
         async function stopRecording() {
             try {
-                recorder.stopRecording(async () => {
+                recorder.stopRecording(() => {
                     const videoBlob = recorder.getBlob();
                     const videoURL = URL.createObjectURL(videoBlob);
                     downloadLink.href = videoURL;
