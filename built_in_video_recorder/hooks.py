@@ -227,3 +227,6 @@ doctype_js = {"Add Demo" : "public/js/hide_library.js"}
 #	"Logging DocType Name": 30  # days to retain logs
 # }
 
+override_whitelisted_methods = {
+    "built_in_video_recorder.compress_video": "built_in_video_recorder.api.video_compressor.compress_video"
+}

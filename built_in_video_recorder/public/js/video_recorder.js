@@ -7,9 +7,9 @@ $(document).ready(function() {
     let currentFacingMode = 'environment'; // Default to back camera
 
     // Include RecordRTC library
-    const script = document.createElement('script');
-    script.src = 'https://cdn.webrtc-experiment.com/RecordRTC.js';
-    document.head.appendChild(script);
+    const recordrtcScript = document.createElement('script');
+    recordrtcScript.src = 'https://cdn.webrtc-experiment.com/RecordRTC.js';
+    document.head.appendChild(recordrtcScript);
 
     async function openCameraModal() {
         $('#videoRecorderModal').remove();
@@ -37,6 +37,7 @@ $(document).ready(function() {
                             <div id="recordingTime" class="recording-time">00:00</div>
                             <div id="videoDuration" class="video-duration" style="display: none;">Duration: 00:00</div>
                             <div id="cameraModeLabel" class="camera-mode-label">Back Camera</div>
+                            <div id="loadingScreen" class="loading-screen" style="display: none;">Processing, please wait...</div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -49,61 +50,6 @@ $(document).ready(function() {
         `;
 
         $('body').append(modalHtml);
-        const styleHtml = `
-        <style>
-            .video-container {
-                position: relative;
-                width: 100%;
-                max-width: 640px;
-                margin: auto;
-            }
-            #videoPreview {
-                width: 100%;
-                height: auto;
-                background: black;
-            }
-            .controls {
-                position: absolute;
-                top: 10px;
-                left: 10px;
-                right: 10px;
-                display: flex;
-                justify-content: space-between;
-                pointer-events: none;
-            }
-            .controls button {
-                pointer-events: auto;
-                background-color: rgba(255, 255, 255, 0.7);
-                border: none;
-                padding: 10px;
-                border-radius: 5px;
-            }
-            .controls button:hover {
-                background-color: rgba(255, 255, 255, 1);
-            }
-            .recording-time,
-            .video-duration {
-                text-align: center;
-                font-size: 18px;
-                font-weight: bold;
-                margin-top: 10px;
-            }
-            .download-link {
-                display: block;
-                text-align: center;
-                margin-top: 10px;
-            }
-            .camera-mode-label {
-                position: absolute;
-                bottom: 10px;
-                left: 10px;
-                background-color: rgba(255, 255, 255, 0.7);
-                padding: 5px 10px;
-                border-radius: 5px;
-            }
-        </style>
-        `;
-        $('head').append(styleHtml);
 
         const videoPreview = document.getElementById("videoPreview");
         const startRecordingButton = document.getElementById("startRecording");
@@ -115,6 +61,7 @@ $(document).ready(function() {
         const recordingTime = document.getElementById("recordingTime");
         const videoDuration = document.getElementById("videoDuration");
         const cameraModeLabel = document.getElementById("cameraModeLabel");
+        const loadingScreen = document.getElementById("loadingScreen");
 
         async function initializeCamera(facingMode = 'environment') {
             try {
@@ -148,7 +95,7 @@ $(document).ready(function() {
             try {
                 recorder = RecordRTC(stream, {
                     type: 'video',
-                    mimeType: 'video/mp4' // Ensure MP4 format
+                    mimeType: 'video/webm'
                 });
                 recorder.startRecording();
                 startTime = Date.now();
@@ -165,9 +112,14 @@ $(document).ready(function() {
 
         async function stopRecording() {
             try {
-                recorder.stopRecording(() => {
+                clearInterval(recordingTimeInterval); // Stop the timer
+                stopRecordingButton.disabled = true;
+                loadingScreen.style.display = "block"; // Show loading screen
+
+                recorder.stopRecording(async () => {
                     const videoBlob = recorder.getBlob();
-                    const videoURL = URL.createObjectURL(videoBlob);
+                    const compressedBlob = await sendVideoToBackend(videoBlob);
+                    const videoURL = URL.createObjectURL(compressedBlob);
                     downloadLink.href = videoURL;
                     downloadLink.style.display = "block";
                     downloadLink.download = "recorded-video.mp4";
@@ -191,31 +143,16 @@ $(document).ready(function() {
                     });
 
                     attachVideoButton.onclick = async function() {
-                        let file = new File([videoBlob], "recorded_video.mp4", { type: 'video/mp4' });
-
-                        let formData = new FormData();
-                        formData.append('file', file);
-                        formData.append('is_private', 1);
-                        formData.append('doctype', cur_frm.doctype);
-                        formData.append('docname', cur_frm.docname);
-
-                        let csrf_token = frappe.csrf_token;
-
                         try {
-                            let response = await fetch('/api/method/upload_file', {
-                                method: 'POST',
-                                body: formData,
-                                headers: {
-                                    'X-Frappe-CSRF-Token': csrf_token
-                                }
-                            });
+                            loadingScreen.textContent = "Attaching video, please wait...";
+                            loadingScreen.style.display = "block";
 
-                            if (response.ok) {
-                                let result = await response.json();
-                                frappe.show_alert({ message: 'Video uploaded successfully', indicator: 'green' });
+                            // Simulate delay for attachment process
+                            setTimeout(async () => {
+                                const fileURL = await uploadBlobToServer(compressedBlob, "recorded_video.mp4");
 
                                 const doc = cur_frm.doc;
-                                doc[currentFieldName] = result.message.file_url; // Use the captured field name here
+                                doc[currentFieldName] = fileURL; // Use the captured field name here
 
                                 await frappe.call({
                                     method: "frappe.desk.form.save.savedocs",
@@ -240,18 +177,20 @@ $(document).ready(function() {
                                 if (window.parent) {
                                     window.parent.$('.modal').modal('hide');
                                 }
-                            } else {
-                                throw new Error('Failed to upload video');
-                            }
+
+                                loadingScreen.style.display = "none"; // Hide loading screen
+                            }, 3000); // Simulate a 3-second delay
                         } catch (error) {
-                            console.error("Error uploading video:", error);
-                            frappe.show_alert({ message: 'Video upload failed', indicator: 'red' });
+                            console.error("Error attaching video:", error);
+                            frappe.show_alert({ message: 'Video attachment failed', indicator: 'red' });
                         }
                     };
 
                     // Show the "Record Again" button and hide the "Start Recording" button
                     recordAgainButton.style.display = "block";
                     startRecordingButton.style.display = "none";
+
+                    loadingScreen.style.display = "none"; // Hide loading screen
                 });
             } catch (error) {
                 console.error("Error stopping recording:", error);
@@ -303,6 +242,61 @@ $(document).ready(function() {
         });
     }
 
+    async function sendVideoToBackend(videoBlob) {
+        const formData = new FormData();
+        formData.append('file', videoBlob, 'video.webm');
+
+        let csrf_token = frappe.csrf_token;
+
+        try {
+            const response = await fetch('/api/method/built_in_video_recorder.api.video_compressor.compress_video', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Frappe-CSRF-Token': csrf_token
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to compress video: ' + await response.text());
+            }
+
+            const compressedBlob = await response.blob();
+            return compressedBlob;
+
+        } catch (error) {
+            console.error("Error compressing video:", error);
+            throw error;
+        }
+    }
+
+    async function uploadBlobToServer(blob, filename) {
+        const formData = new FormData();
+        formData.append('file', blob, filename);
+
+        let csrf_token = frappe.csrf_token;
+
+        try {
+            const response = await fetch('/api/method/upload_file', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Frappe-CSRF-Token': csrf_token
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to upload video: ' + await response.text());
+            }
+
+            const result = await response.json();
+            return result.message.file_url;
+        } catch (error) {
+            console.error("Error uploading video:", error);
+            throw error;
+        }
+    }
+
     addVideoButton();
 
     $(document).on('DOMNodeInserted', function(e) {
@@ -313,6 +307,6 @@ $(document).ready(function() {
 
     // Event listener for attach buttons
     $(document).on('click', '.btn-attach', function() {
-        currentFieldName = $(this).data('fieldname'); // Capture the field name
+        currentFieldName = $(this).data('fieldname'); // Call openCameraModal here
     });
 });
