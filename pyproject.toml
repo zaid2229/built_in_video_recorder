@@ -22,5 +22,4 @@ build-backend = "flit_core.buildapi"
 [deploy.dependencies.apt]
 packages = [
     "ffmpeg",
-    "werkzeug",
 ]
