@@ -21,17 +21,7 @@ def compress_video():
 
         file.save(input_path)
 
-        # Compress the video using ffmpeg with reduced resolution and higher CRF value
-        command = [
-            'ffmpeg',
-            '-i', input_path,
-            '-vf', 'scale=640:360',  # Reduce resolution to 640x360
-            '-vcodec', 'libx264',
-            '-crf', '30',  # Increase CRF value for higher compression
-            '-preset', 'fast',
-            '-b:v', '500k',  # Set maximum bitrate to 500 kbps
-            '-y', output_path
-        ]
+        command = ['ffmpeg', '-y', '-i', input_path, '-c:v', 'libx264', '-crf', '28', '-preset', 'fast', output_path]
 
         process = subprocess.run(command, capture_output=True, text=True)
 

@@ -95,7 +95,8 @@ $(document).ready(function() {
             try {
                 recorder = RecordRTC(stream, {
                     type: 'video',
-                    mimeType: 'video/webm'
+                    mimeType: 'video/webm', // Record in WebM format
+                    videoBitsPerSecond: 0.25 * 1000 * 1000 // set bitrate to 0.25 Mbps
                 });
                 recorder.startRecording();
                 startTime = Date.now();
@@ -310,3 +311,4 @@ $(document).ready(function() {
         currentFieldName = $(this).data('fieldname'); // Call openCameraModal here
     });
 });
+
