@@ -10,8 +10,8 @@ app_license = "mit"
 # ------------------
 
 # include js, css files in header of desk.html
-app_include_css = "/assets/built_in_video_recorder/css/video_recorder.css"
-app_include_js = "/assets/built_in_video_recorder/js/video_recorder.js"
+# app_include_css = "/assets/built_in_video_recorder/css/video_recorder.css"
+# app_include_js = "/assets/built_in_video_recorder/js/video_recorder.js"
 
 # include js, css files in header of web template
 # web_include_css = "/assets/built_in_video_recorder/css/built_in_video_recorder.css"
@@ -28,8 +28,8 @@ app_include_js = "/assets/built_in_video_recorder/js/video_recorder.js"
 # page_js = {"page" : "public/js/file.js"}
 
 # include js in doctype views
-doctype_js = {"Add Demo" : "public/js/hide_library.js"}
-# doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
+# doctype_js = {"Student Complete Progress" : "public/js/generate_certificate.js" ,}
+# doctype_list_js = {"File" :"public/js/download_certificate.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
 

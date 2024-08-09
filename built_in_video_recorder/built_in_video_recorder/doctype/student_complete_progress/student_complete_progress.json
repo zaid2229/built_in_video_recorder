@@ -1,0 +1,387 @@
+{
+ "actions": [],
+ "autoname": "field:student_name",
+ "creation": "2024-08-08 18:09:45.704014",
+ "default_view": "List",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "student_name",
+  "student_name2",
+  "molvi_name",
+  "graduation_date",
+  "masjid_name",
+  "cluster_no",
+  "select_jgir",
+  "column_break_vmaz",
+  "ghusol_farayez",
+  "date_of_farayez_ghusol",
+  "ghusol_sunath",
+  "date_of_sunath_ghusol",
+  "ghusol_nawaqis",
+  "date_of_nawaqis_ghusol",
+  "wazu_farayez",
+  "date_of_farayez_wazu",
+  "wazu_sunath",
+  "date_of_sunath_wazu",
+  "wazu_nawaqis",
+  "date_of_nawaqis_wazu",
+  "fraez_e_namaz",
+  "date_of_fraez",
+  "wajibath_e_namaz",
+  "date_of_wajibath",
+  "sana",
+  "date_of_sana",
+  "sureh_fatihah",
+  "date_of_sureh_fatihah",
+  "zammi_surah",
+  "date_of_zammi_surah",
+  "tasbihath_rukh_and_sajda",
+  "date_of_tasbihath_rukh_and_sajda",
+  "attahiyath",
+  "date_of_attahiyath",
+  "darood_e_ibrahim",
+  "date_of_darood_e_ibrahim",
+  "duwa_e_masora",
+  "date_of_duwa_e_masora",
+  "from_sana_to_salam",
+  "date_of_sana_to_salam",
+  "nafeel_namaz",
+  "date_of_nafil_namaz",
+  "namaz_e_janaza",
+  "date_of_namaz_e_janaza",
+  "generate_and_send_certificate",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "student_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Student",
+   "unique": 1
+  },
+  {
+   "fieldname": "student_name2",
+   "fieldtype": "Data",
+   "label": "Student Name"
+  },
+  {
+   "fieldname": "molvi_name",
+   "fieldtype": "Data",
+   "label": "Molvi Name"
+  },
+  {
+   "fieldname": "graduation_date",
+   "fieldtype": "Date",
+   "label": "Graduation Date"
+  },
+  {
+   "fieldname": "masjid_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Masjid Name",
+   "options": "Masjid"
+  },
+  {
+   "fetch_from": "masjid_name.cluster_no",
+   "fieldname": "cluster_no",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Cluster No"
+  },
+  {
+   "fetch_from": "student_name.status",
+   "fieldname": "select_jgir",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Graduated\nWaiting\nIn Batch"
+  },
+  {
+   "fieldname": "column_break_vmaz",
+   "fieldtype": "Column Break",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "ghusol_farayez",
+   "fieldtype": "Check",
+   "label": "Ghusol Farayez",
+   "read_only": 1
+  },
+  {
+   "fieldname": "date_of_farayez_ghusol",
+   "fieldtype": "Date",
+   "label": "Date Of Farayez (Ghusol)",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "ghusol_sunath",
+   "fieldtype": "Check",
+   "label": "Ghusol Sunath",
+   "read_only": 1
+  },
+  {
+   "fieldname": "date_of_sunath_ghusol",
+   "fieldtype": "Date",
+   "label": "Date Of Sunath (Ghusol)",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "ghusol_nawaqis",
+   "fieldtype": "Check",
+   "label": "Ghusol Nawaqis",
+   "read_only": 1
+  },
+  {
+   "fieldname": "date_of_nawaqis_ghusol",
+   "fieldtype": "Date",
+   "label": "Date Of Nawaqis (Ghusol)",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "wazu_farayez",
+   "fieldtype": "Check",
+   "label": "Wazu Farayez",
+   "read_only": 1
+  },
+  {
+   "fieldname": "date_of_farayez_wazu",
+   "fieldtype": "Date",
+   "label": "Date of Farayez (Wazu)",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "wazu_sunath",
+   "fieldtype": "Check",
+   "label": "Wazu Sunath",
+   "read_only": 1
+  },
+  {
+   "fieldname": "date_of_sunath_wazu",
+   "fieldtype": "Date",
+   "label": "Date Of Sunath (Wazu)",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "wazu_nawaqis",
+   "fieldtype": "Check",
+   "label": "Wazu Nawaqis",
+   "read_only": 1
+  },
+  {
+   "fieldname": "date_of_nawaqis_wazu",
+   "fieldtype": "Date",
+   "label": "Date Of Nawaqis (Wazu)",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "fraez_e_namaz",
+   "fieldtype": "Check",
+   "label": "Fraez E Namaz",
+   "read_only": 1
+  },
+  {
+   "fieldname": "date_of_fraez",
+   "fieldtype": "Date",
+   "label": "Date Of Fraez",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "wajibath_e_namaz",
+   "fieldtype": "Check",
+   "label": "Wajibath E Namaz",
+   "read_only": 1
+  },
+  {
+   "fieldname": "date_of_wajibath",
+   "fieldtype": "Date",
+   "label": "Date Of Wajibath",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "sana",
+   "fieldtype": "Check",
+   "label": "Sana",
+   "read_only": 1
+  },
+  {
+   "fieldname": "date_of_sana",
+   "fieldtype": "Date",
+   "label": "Date Of Sana",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "sureh_fatihah",
+   "fieldtype": "Check",
+   "label": "Sureh Fatihah",
+   "read_only": 1
+  },
+  {
+   "fieldname": "date_of_sureh_fatihah",
+   "fieldtype": "Date",
+   "label": "Date of Sureh Fatihah",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "zammi_surah",
+   "fieldtype": "Check",
+   "label": "Zammi Surah",
+   "read_only": 1
+  },
+  {
+   "fieldname": "date_of_zammi_surah",
+   "fieldtype": "Date",
+   "label": "Date of Zammi Surah",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "tasbihath_rukh_and_sajda",
+   "fieldtype": "Check",
+   "label": "Tasbihath Rukh And Sajda",
+   "read_only": 1
+  },
+  {
+   "fieldname": "date_of_tasbihath_rukh_and_sajda",
+   "fieldtype": "Date",
+   "label": "Date of Tasbihath Rukh And Sajda",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "attahiyath",
+   "fieldtype": "Check",
+   "label": "Attahiyath",
+   "read_only": 1
+  },
+  {
+   "fieldname": "date_of_attahiyath",
+   "fieldtype": "Date",
+   "label": "Date of Attahiyath",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "darood_e_ibrahim",
+   "fieldtype": "Check",
+   "label": "Darood E Ibrahim",
+   "read_only": 1
+  },
+  {
+   "fieldname": "date_of_darood_e_ibrahim",
+   "fieldtype": "Date",
+   "label": "Date of Darood E Ibrahim",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "duwa_e_masora",
+   "fieldtype": "Check",
+   "label": "Duwa E Masora",
+   "read_only": 1
+  },
+  {
+   "fieldname": "date_of_duwa_e_masora",
+   "fieldtype": "Date",
+   "label": "Date of Duwa E Masora",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "from_sana_to_salam",
+   "fieldtype": "Check",
+   "label": " From Sana To Salam",
+   "read_only": 1
+  },
+  {
+   "fieldname": "date_of_sana_to_salam",
+   "fieldtype": "Date",
+   "label": "Date Of Sana To Salam",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "nafeel_namaz",
+   "fieldtype": "Check",
+   "label": " Nafeel Namaz",
+   "read_only": 1
+  },
+  {
+   "fieldname": "date_of_nafil_namaz",
+   "fieldtype": "Date",
+   "label": "Date Of Nafil Namaz",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "namaz_e_janaza",
+   "fieldtype": "Check",
+   "label": "Namaz E Janaza",
+   "read_only": 1
+  },
+  {
+   "fieldname": "date_of_namaz_e_janaza",
+   "fieldtype": "Date",
+   "label": "Date Of Namaz E Janaza",
+   "read_only": 1
+  },
+  {
+   "fieldname": "generate_and_send_certificate",
+   "fieldtype": "Button",
+   "label": "Generate Certificate "
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Student Complete Progress",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-08-08 18:31:05.811217",
+ "modified_by": "Administrator",
+ "module": "Built In Video Recorder",
+ "name": "Student Complete Progress",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "queue_in_background": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
