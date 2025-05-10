@@ -127,8 +127,12 @@ $(document).ready(function () {
                         attachVideoButton.disabled = true;
                         attachVideoButton.textContent = "Uploading...";
 
+                        let site_url = frappe.urllib.get_base_url();
+
+                        console.log(site_url)
+
                         try {
-                            let response = await fetch('http://127.0.0.1:8001/api/method/upload_file', {
+                            let response = await fetch(`${site_url}/api/method/upload_file`, {
                                 method: 'POST',
                                 body: formData,
                                 headers: {
