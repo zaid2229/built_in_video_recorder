@@ -159,9 +159,11 @@ app_include_js = "/assets/built_in_video_recorder/js/video_recorder15.js"
 # Overriding Methods
 # ------------------------------
 #
-# override_whitelisted_methods = {
-#	"frappe.desk.doctype.event.event.get_events": "built_in_video_recorder.event.get_events"
-# }
+override_whitelisted_methods = {
+	"frappe.desk.doctype.event.event.get_events": "built_in_video_recorder.event.get_events",
+
+    "frappe.handler.upload_file":"built_in_video_recorder.override.video_attach_override.upload_file"
+}
 #
 # each overriding function accepts a `data` argument;
 # generated from the base implementation of the doctype dashboard,
